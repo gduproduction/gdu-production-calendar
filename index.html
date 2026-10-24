@@ -19,7 +19,7 @@
 const $=id=>document.getElementById(id),configKey='gdu_public_config_v1';let client=null,session=null,staffName='';const todayLocal=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};$('day').value=todayLocal();
 function show(id){for(const x of ['config','auth','app'])$(x).classList.toggle('hidden',x!==id)}
 function msg(id,message){$(id).textContent=message;$(id).classList.toggle('hidden',!message)}
-function configured(){try{return JSON.parse(localStorage.getItem(configKey)||'null')}catch{return null}}
+function configured(){return {url:"https://ztyupkrjjonqtlhskzfg.supabase.co",key:"sb_publishable_0-nI5VmQD0x8EesqQ85KHQ_bvy2E_YC"}}
 function setup(conf){if(!window.supabase)throw Error('Supabase-biblioteket kunne ikke indlæses. Tjek internetforbindelsen.');client=window.supabase.createClient(conf.url,conf.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}})}
 async function start(){const conf=configured();if(!conf){show('config');return}try{setup(conf);const{data,error}=await client.auth.getSession();if(error)throw error;session=data.session;if(session){await showApp()}else show('auth')}catch(err){show('config');msg('configMessage',err.message)}}
 $('saveConfig').onclick=async()=>{const url=$('supaUrl').value.trim().replace(/\/$/,''),key=$('supaKey').value.trim();if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url)||!key){msg('configMessage','Indtast en gyldig Supabase-URL og den offentlige nøgle.');return}if(key.startsWith('sb_secret_')){msg('configMessage','Brug aldrig en secret key i en hjemmeside.');return}localStorage.setItem(configKey,JSON.stringify({url,key}));msg('configMessage','');await start()};
